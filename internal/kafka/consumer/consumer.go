@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/rs/zerolog/log"
-	"meilisearch-loader/internal/meilisearch/producer"
 	"meilisearch-loader/internal/shared"
 	"meilisearch-loader/internal/utils"
 	"net/http"
@@ -58,15 +57,8 @@ func NewNoAuth(kafkaHost, schemaRegHost, topic string) DeserializingAvroConsumer
 	}
 }
 
-// DoConsume adds messages to a channel and publishes them to Meilisearch
-func (c *DeserializingAvroConsumer) DoConsume(p *producer.MeilisearchProducer) {
-	msgChan := make(chan shared.Message)
-	go c.deserializeMessage(msgChan)
-	go p.PublishMessageBatch(msgChan)
-}
-
-// deserializeMessage deserializes the key and value from a message and adds the deserialized message to msgChan
-func (c *DeserializingAvroConsumer) deserializeMessage(msgChan chan<- shared.Message) {
+// DeserializeMessage deserializes the key and value from a message and adds the deserialized message to msgChan
+func (c *DeserializingAvroConsumer) DeserializeMessage(msgChan chan<- shared.Message) {
 	for {
 		message := shared.Message{}
 		m, err := c.KafkaClient.ReadMessage(context.Background())

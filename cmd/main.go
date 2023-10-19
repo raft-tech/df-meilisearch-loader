@@ -7,7 +7,7 @@ import (
 	"meilisearch-loader/internal/kafka/consumer"
 	meiliConfig "meilisearch-loader/internal/meilisearch/config"
 	"meilisearch-loader/internal/meilisearch/producer"
-	"meilisearch-loader/internal/shared"
+	"meilisearch-loader/internal/model"
 	"os"
 )
 
@@ -31,7 +31,7 @@ func main() {
 	kafkaConsumer := consumer.NewNoAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic)
 	defer kafkaConsumer.KafkaClient.Close()
 
-	msgChan := make(chan shared.Message)
+	msgChan := make(chan model.Message)
 	go kafkaConsumer.DeserializeMessage(msgChan)
 	go meiliProducer.PublishMessageBatch(msgChan)
 

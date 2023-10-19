@@ -4,7 +4,7 @@ import (
 	meiliGo "github.com/meilisearch/meilisearch-go"
 	"github.com/rs/zerolog/log"
 	"meilisearch-loader/internal/meilisearch/config"
-	"meilisearch-loader/internal/shared"
+	"meilisearch-loader/internal/model"
 	"meilisearch-loader/internal/utils"
 	"strings"
 	"time"
@@ -30,7 +30,7 @@ func NewProducer(meiliCfg *config.Config) MeilisearchProducer {
 }
 
 // PublishMessageBatch publishes a batch of records to Meilisearch.
-func (p *MeilisearchProducer) PublishMessageBatch(msgChan <-chan shared.Message) {
+func (p *MeilisearchProducer) PublishMessageBatch(msgChan <-chan model.Message) {
 	var msgs []map[string]any
 	var bufSize int64 = 0
 	var publishedRecords int64 = 0

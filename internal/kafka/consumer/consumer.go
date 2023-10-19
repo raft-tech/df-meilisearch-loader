@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/rs/zerolog/log"
-	"meilisearch-loader/internal/shared"
+	"meilisearch-loader/internal/model"
 	"meilisearch-loader/internal/utils"
 	"net/http"
 	"net/url"
@@ -58,9 +58,9 @@ func NewNoAuth(kafkaHost, schemaRegHost, topic string) DeserializingAvroConsumer
 }
 
 // DeserializeMessage deserializes the key and value from a message and adds the deserialized message to msgChan
-func (c *DeserializingAvroConsumer) DeserializeMessage(msgChan chan<- shared.Message) {
+func (c *DeserializingAvroConsumer) DeserializeMessage(msgChan chan<- model.Message) {
 	for {
-		message := shared.Message{}
+		message := model.Message{}
 		m, err := c.KafkaClient.ReadMessage(context.Background())
 		if err != nil {
 			log.Error().Msgf("Error reading from Kafka: %s", err)

@@ -3,10 +3,10 @@ package main
 import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	kafkaConfig "meilisearch-loader/consumer/internal/kafka/config"
-	"meilisearch-loader/consumer/internal/kafka/consumer"
-	meiliConfig "meilisearch-loader/consumer/internal/meilisearch/config"
-	"meilisearch-loader/consumer/internal/meilisearch/producer"
+	kafkaConfig "meilisearch-loader/internal/kafka/config"
+	"meilisearch-loader/internal/kafka/consumer"
+	meiliConfig "meilisearch-loader/internal/meilisearch/config"
+	"meilisearch-loader/internal/meilisearch/producer"
 	"os"
 )
 

@@ -5,7 +5,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"meilisearch-loader/internal/meilisearch/config"
 	"meilisearch-loader/internal/model"
-	"meilisearch-loader/internal/utils"
+	"meilisearch-loader/internal/unmarshall"
 	"strings"
 	"time"
 )
@@ -36,7 +36,7 @@ func (p *MeilisearchProducer) PublishMessageBatch(msgChan <-chan model.Message) 
 	var publishedRecords int64 = 0
 	for msg := range msgChan {
 		var msgValueJson map[string]any
-		if err := utils.UnmarshalInto(&msgValueJson, strings.NewReader(string(msg.Value))); err != nil {
+		if err := unmarshall.Into(&msgValueJson, strings.NewReader(string(msg.Value))); err != nil {
 			log.Error().Msgf("Failed to unmarshal message value into json: %s", err)
 		} else {
 			msgs = append(msgs, msgValueJson)

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/rs/zerolog/log"
 	"meilisearch-loader/internal/model"
-	"meilisearch-loader/internal/utils"
+	"meilisearch-loader/internal/unmarshall"
 	"net/http"
 	"net/url"
 	"path"
@@ -173,7 +173,7 @@ func retrieveSchemaById(registryUrl string, schemaId uint32) (*Schema, error) {
 		return nil, nil
 	}
 	var schemaResponse SchemaRegistryResponse
-	err = utils.UnmarshalInto(&schemaResponse, resp.Body)
+	err = unmarshall.Into(&schemaResponse, resp.Body)
 	if err != nil {
 		log.Error().Msgf("Could not unmarshal response.")
 		return nil, err

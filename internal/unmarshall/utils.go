@@ -1,4 +1,4 @@
-package utils
+package unmarshall
 
 import (
 	"encoding/json"
@@ -7,9 +7,9 @@ import (
 	"io"
 )
 
-// UnmarshalInto deserializes the content in `in` into an uninitialized struct.
+// Into deserializes the content in `in` into an uninitialized struct.
 // Returns nil if the operation succeeded, otherwise any error encountered.
-func UnmarshalInto[T any](out *T, in io.Reader) error {
+func Into[T any](out *T, in io.Reader) error {
 	var unmarshallErr *json.UnmarshalTypeError
 	decoder := json.NewDecoder(in)
 	decoder.DisallowUnknownFields() // Error on unknown fields

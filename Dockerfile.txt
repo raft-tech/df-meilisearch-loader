@@ -1,0 +1,17 @@
+#syntax=docker/dockerfile:1.4
+FROM golang:bullseye AS builder
+
+WORKDIR /app
+
+COPY . ./
+RUN go mod download
+
+RUN go build -o meilisearch_loader consumer/cmd/main.go
+
+FROM busybox:latest
+
+COPY --from=builder /app/meilisearch_loader /
+
+EXPOSE 8080
+
+CMD ["/meilisearch_loader"]

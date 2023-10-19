@@ -3,9 +3,9 @@ package main
 import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	kafkaConfig "meilisearch-loader/internal/kafka/config"
+	kafkaConfig "meilisearch-loader/internal/kafka/configs"
 	"meilisearch-loader/internal/kafka/consumer"
-	meiliConfig "meilisearch-loader/internal/meilisearch/config"
+	meiliConfig "meilisearch-loader/internal/meilisearch/configs"
 	"meilisearch-loader/internal/meilisearch/producer"
 	"meilisearch-loader/internal/model"
 	"os"

@@ -3,7 +3,7 @@ package producer
 import (
 	meiliGo "github.com/meilisearch/meilisearch-go"
 	"github.com/rs/zerolog/log"
-	"meilisearch-loader/internal/meilisearch/config"
+	"meilisearch-loader/internal/meilisearch/configs"
 	"meilisearch-loader/internal/model"
 	"meilisearch-loader/internal/unmarshall"
 	"strings"
@@ -17,7 +17,7 @@ type MeilisearchProducer struct {
 	IndexPrimaryKey string
 }
 
-func NewProducer(meiliCfg *config.Config) MeilisearchProducer {
+func NewProducer(meiliCfg *configs.Config) MeilisearchProducer {
 	return MeilisearchProducer{
 		Client: meiliGo.NewClient(meiliGo.ClientConfig{
 			Host:   meiliCfg.Url,

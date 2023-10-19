@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . ./
 RUN go mod download
 
-RUN go build -o meilisearch_loader consumer/cmd/main.go
+RUN go build -o meilisearch_loader cmd/main.go
 
 FROM busybox:latest
 

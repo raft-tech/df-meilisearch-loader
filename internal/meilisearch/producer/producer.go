@@ -3,9 +3,9 @@ package producer
 import (
 	meiliGo "github.com/meilisearch/meilisearch-go"
 	"github.com/rs/zerolog/log"
-	"meilisearch-loader/consumer/internal/meilisearch/config"
-	"meilisearch-loader/consumer/internal/shared"
-	"meilisearch-loader/consumer/internal/utils"
+	"meilisearch-loader/internal/meilisearch/config"
+	"meilisearch-loader/internal/shared"
+	"meilisearch-loader/internal/utils"
 	"strings"
 	"time"
 )

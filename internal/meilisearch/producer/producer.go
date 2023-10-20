@@ -3,9 +3,9 @@ package producer
 import (
 	meiliGo "github.com/meilisearch/meilisearch-go"
 	"github.com/rs/zerolog/log"
-	"meilisearch-loader/internal/meilisearch/config"
-	"meilisearch-loader/internal/shared"
-	"meilisearch-loader/internal/utils"
+	"meilisearch-loader/internal/meilisearch/configs"
+	"meilisearch-loader/internal/model"
+	"meilisearch-loader/internal/unmarshall"
 	"strings"
 	"time"
 )
@@ -17,7 +17,7 @@ type MeilisearchProducer struct {
 	IndexPrimaryKey string
 }
 
-func NewProducer(meiliCfg *config.Config) MeilisearchProducer {
+func NewProducer(meiliCfg *configs.Config) MeilisearchProducer {
 	return MeilisearchProducer{
 		Client: meiliGo.NewClient(meiliGo.ClientConfig{
 			Host:   meiliCfg.Url,
@@ -30,13 +30,13 @@ func NewProducer(meiliCfg *config.Config) MeilisearchProducer {
 }
 
 // PublishMessageBatch publishes a batch of records to Meilisearch.
-func (p *MeilisearchProducer) PublishMessageBatch(msgChan <-chan shared.Message) {
+func (p *MeilisearchProducer) PublishMessageBatch(msgChan <-chan model.Message) {
 	var msgs []map[string]any
 	var bufSize int64 = 0
 	var publishedRecords int64 = 0
 	for msg := range msgChan {
 		var msgValueJson map[string]any
-		if err := utils.UnmarshalInto(&msgValueJson, strings.NewReader(string(msg.Value))); err != nil {
+		if err := unmarshall.Into(&msgValueJson, strings.NewReader(string(msg.Value))); err != nil {
 			log.Error().Msgf("Failed to unmarshal message value into json: %s", err)
 		} else {
 			msgs = append(msgs, msgValueJson)

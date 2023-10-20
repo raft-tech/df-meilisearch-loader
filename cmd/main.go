@@ -3,10 +3,11 @@ package main
 import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	kafkaConfig "meilisearch-loader/internal/kafka/config"
+	kafkaConfig "meilisearch-loader/internal/kafka/configs"
 	"meilisearch-loader/internal/kafka/consumer"
-	meiliConfig "meilisearch-loader/internal/meilisearch/config"
+	meiliConfig "meilisearch-loader/internal/meilisearch/configs"
 	"meilisearch-loader/internal/meilisearch/producer"
+	"meilisearch-loader/internal/model"
 	"os"
 )
 
@@ -30,7 +31,9 @@ func main() {
 	kafkaConsumer := consumer.NewNoAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic)
 	defer kafkaConsumer.KafkaClient.Close()
 
-	kafkaConsumer.DoConsume(&meiliProducer)
+	msgChan := make(chan model.Message)
+	go kafkaConsumer.DeserializeMessage(msgChan)
+	go meiliProducer.PublishMessageBatch(msgChan)
 
 	select {}
 }

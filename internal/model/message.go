@@ -1,4 +1,4 @@
-package shared
+package model
 
 // Message is the output representation of a Kafka Message that only contains the payload.
 type Message struct {

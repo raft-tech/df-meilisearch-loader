@@ -5,9 +5,8 @@ import (
 	"encoding/binary"
 	"fmt"
 	"github.com/rs/zerolog/log"
-	"meilisearch-loader/internal/meilisearch/producer"
-	"meilisearch-loader/internal/shared"
-	"meilisearch-loader/internal/utils"
+	"meilisearch-loader/internal/model"
+	"meilisearch-loader/internal/unmarshall"
 	"net/http"
 	"net/url"
 	"path"
@@ -58,17 +57,10 @@ func NewNoAuth(kafkaHost, schemaRegHost, topic string) DeserializingAvroConsumer
 	}
 }
 
-// DoConsume adds messages to a channel and publishes them to Meilisearch
-func (c *DeserializingAvroConsumer) DoConsume(p *producer.MeilisearchProducer) {
-	msgChan := make(chan shared.Message)
-	go c.deserializeMessage(msgChan)
-	go p.PublishMessageBatch(msgChan)
-}
-
-// deserializeMessage deserializes the key and value from a message and adds the deserialized message to msgChan
-func (c *DeserializingAvroConsumer) deserializeMessage(msgChan chan<- shared.Message) {
+// DeserializeMessage deserializes the key and value from a message and adds the deserialized message to msgChan
+func (c *DeserializingAvroConsumer) DeserializeMessage(msgChan chan<- model.Message) {
 	for {
-		message := shared.Message{}
+		message := model.Message{}
 		m, err := c.KafkaClient.ReadMessage(context.Background())
 		if err != nil {
 			log.Error().Msgf("Error reading from Kafka: %s", err)
@@ -181,7 +173,7 @@ func retrieveSchemaById(registryUrl string, schemaId uint32) (*Schema, error) {
 		return nil, nil
 	}
 	var schemaResponse SchemaRegistryResponse
-	err = utils.UnmarshalInto(&schemaResponse, resp.Body)
+	err = unmarshall.Into(&schemaResponse, resp.Body)
 	if err != nil {
 		log.Error().Msgf("Could not unmarshal response.")
 		return nil, err

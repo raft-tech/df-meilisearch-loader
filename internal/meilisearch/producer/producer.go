@@ -6,6 +6,7 @@ import (
 	"meilisearch-loader/internal/meilisearch/configs"
 	"meilisearch-loader/internal/model"
 	"meilisearch-loader/internal/unmarshall"
+	"meilisearch-loader/internal/xml"
 	"strings"
 	"time"
 )
@@ -35,11 +36,13 @@ func (p *MeilisearchProducer) PublishMessageBatch(msgChan <-chan model.Message) 
 	var bufSize int64 = 0
 	var publishedRecords int64 = 0
 	for msg := range msgChan {
-		var msgValueJson map[string]any
-		if err := unmarshall.Into(&msgValueJson, strings.NewReader(string(msg.Value))); err != nil {
+		var msgJSON, _ = xml.ToJSON(strings.NewReader(string(msg.Value)))
+		var entityResult model.EntityResult
+		if err := unmarshall.Into(&entityResult, msgJSON); err != nil {
 			log.Error().Msgf("Failed to unmarshal message value into json: %s", err)
 		} else {
-			msgs = append(msgs, msgValueJson)
+			documentMap := model.EntityResultToMap(&entityResult)
+			msgs = append(msgs, documentMap)
 			bufSize++
 			if bufSize == p.BatchSize {
 				log.Info().Msgf("Publishing batch of %d records to meilisearch...", bufSize)

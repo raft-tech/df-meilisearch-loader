@@ -12,7 +12,7 @@ import (
 func Into[T any](out *T, in io.Reader) error {
 	var unmarshallErr *json.UnmarshalTypeError
 	decoder := json.NewDecoder(in)
-	decoder.DisallowUnknownFields() // Error on unknown fields
+	//decoder.DisallowUnknownFields() // Error on unknown fields
 	if err := decoder.Decode(out); err != nil {
 		if errors.As(err, &unmarshallErr) {
 			return fmt.Errorf("incorrect type in field: %v", unmarshallErr.Field)

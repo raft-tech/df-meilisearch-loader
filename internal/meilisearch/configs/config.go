@@ -13,7 +13,7 @@ type Config struct {
 	Url             string
 }
 
-var (
+const (
 	meilisearchUrl                     = "localhost:7700"
 	meilisearchApiKey                  = "aSampleMasterKey"
 	meilisearchIndex                   = "test-index"
@@ -22,16 +22,14 @@ var (
 )
 
 func NewConfig() *Config {
-	return &Config{
+	cfg := &Config{
 		ApiKey:          meilisearchApiKey,
 		BatchSize:       meilisearchBatchSize,
 		IndexPrimaryKey: meilisearchDatasetPrimaryKey,
 		Index:           meilisearchIndex,
 		Url:             meilisearchUrl,
 	}
-}
 
-func (cfg *Config) ParseEnvs() {
 	if m, exists := os.LookupEnv("MEILISEARCH_URL"); exists {
 		cfg.Url = m
 	}
@@ -49,4 +47,6 @@ func (cfg *Config) ParseEnvs() {
 	if mKey, exists := os.LookupEnv("MEILISEARCH_INDEX_PRIMARY_KEY"); exists {
 		cfg.IndexPrimaryKey = mKey
 	}
+
+	return cfg
 }

@@ -9,7 +9,6 @@ import (
 
 func TestNewProducer(t *testing.T) {
 	meiliCfg := meiliConfig.NewConfig()
-	meiliCfg.ParseEnvs()
 
 	p := NewProducer(meiliCfg)
 	data := []struct {

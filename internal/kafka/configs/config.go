@@ -11,21 +11,19 @@ type Config struct {
 	Topic        string
 }
 
-var (
+const (
 	kafkaHost    = "localhost:9092"
 	schemaRegUrl = "localhost:8081"
 	topic        = "test-topic"
 )
 
 func NewConfig() *Config {
-	return &Config{
+	cfg := &Config{
 		BrokerHost:   kafkaHost,
 		SchemaRegUrl: schemaRegUrl,
 		Topic:        topic,
 	}
-}
 
-func (cfg *Config) ParseEnvs() {
 	if kh, exists := os.LookupEnv("KAFKA_BROKER_HOST"); exists {
 		cfg.BrokerHost = kh
 	}
@@ -35,4 +33,6 @@ func (cfg *Config) ParseEnvs() {
 	if t, exists := os.LookupEnv("KAFKA_TOPIC"); exists {
 		cfg.Topic = t
 	}
+
+	return cfg
 }

@@ -7,7 +7,6 @@ import (
 )
 
 func TestConfig_ParseEnvs_Defaults(t *testing.T) {
-	c := NewConfig()
 	data := []struct {
 		name     string
 		expected string
@@ -20,7 +19,7 @@ func TestConfig_ParseEnvs_Defaults(t *testing.T) {
 	}
 	for _, d := range data {
 		t.Run(d.name, func(t *testing.T) {
-			c.ParseEnvs()
+			c := NewConfig()
 			r := getField(c, d.name)
 			var result string
 			if reflect.TypeOf(r).String() == "int64" {
@@ -36,7 +35,6 @@ func TestConfig_ParseEnvs_Defaults(t *testing.T) {
 }
 
 func TestConfig_ParseEnvs(t *testing.T) {
-	c := NewConfig()
 	data := []struct {
 		name     string
 		env      string
@@ -51,7 +49,7 @@ func TestConfig_ParseEnvs(t *testing.T) {
 	for _, d := range data {
 		t.Run(d.name, func(t *testing.T) {
 			t.Setenv(d.env, d.envValue)
-			c.ParseEnvs()
+			c := NewConfig()
 			r := getField(c, d.name)
 			var result string
 			if reflect.TypeOf(r).String() == "int64" {

@@ -16,7 +16,6 @@ func main() {
 	log.Info().Msg("Starting up meilisearch loader...")
 
 	meiliCfg := meiliConfig.NewConfig()
-	meiliCfg.ParseEnvs()
 
 	meiliProducer := producer.NewProducer(meiliCfg)
 	log.Info().Msgf("Connecting to meilisearch at %s...", meiliCfg.Url)
@@ -26,7 +25,6 @@ func main() {
 	}
 
 	kafkaCfg := kafkaConfig.NewConfig()
-	kafkaCfg.ParseEnvs()
 
 	kafkaConsumer := consumer.NewNoAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic)
 	defer kafkaConsumer.KafkaClient.Close()

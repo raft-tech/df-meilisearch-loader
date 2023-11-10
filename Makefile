@@ -15,7 +15,7 @@ deploy:
 	kubectl apply -f ${PROJECT_HOME}/deploy.yaml
 
 docker:
-	docker build --no-cache -f ${PROJECT_HOME}/Dockerfile.txt \
+	docker build --no-cache -f ${PROJECT_HOME}/Dockerfile \
        ${PROJECT_HOME}/ \
        -t ${FULL_IMAGE}
 

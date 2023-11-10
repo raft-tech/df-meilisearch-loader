@@ -5,8 +5,7 @@ import (
 	"testing"
 )
 
-func TestConfig_ParseEnvs_Defaults(t *testing.T) {
-	c := NewConfig()
+func TestConfig_Defaults(t *testing.T) {
 	data := []struct {
 		name     string
 		expected string
@@ -17,7 +16,7 @@ func TestConfig_ParseEnvs_Defaults(t *testing.T) {
 	}
 	for _, d := range data {
 		t.Run(d.name, func(t *testing.T) {
-			c.ParseEnvs()
+			c := NewConfig()
 			if result := getField(c, d.name); result != d.expected {
 				t.Errorf("Expected %s, got %s", d.expected, result)
 			}
@@ -26,8 +25,7 @@ func TestConfig_ParseEnvs_Defaults(t *testing.T) {
 	}
 }
 
-func TestConfig_ParseEnvs(t *testing.T) {
-	c := NewConfig()
+func TestConfig_Envs(t *testing.T) {
 	data := []struct {
 		name     string
 		env      string
@@ -40,7 +38,7 @@ func TestConfig_ParseEnvs(t *testing.T) {
 	for _, d := range data {
 		t.Run(d.name, func(t *testing.T) {
 			t.Setenv(d.env, d.envValue)
-			c.ParseEnvs()
+			c := NewConfig()
 			if result := getField(c, d.name); result != d.envValue {
 				t.Errorf("Expected %s, got %s", d.envValue, result)
 			}

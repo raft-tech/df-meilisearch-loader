@@ -2,10 +2,6 @@ package configs
 
 import (
 	"os"
-
-	"github.com/segmentio/kafka-go/sasl"
-	"github.com/segmentio/kafka-go/sasl/plain"
-	"github.com/segmentio/kafka-go/sasl/scram"
 )
 
 type Config struct {
@@ -13,13 +9,18 @@ type Config struct {
 	MaxIdleTime   string
 	SchemaRegUrl  string
 	Topic         string
-	SaslMechanism sasl.Mechanism
+	SaslMechanism string
+	SaslUsername  string
+	SaslSecret    string
 }
 
 const (
-	kafkaHost    = "localhost:9092"
-	schemaRegUrl = "localhost:8081"
-	topic        = "test-topic"
+	kafkaHost     = "localhost:9092"
+	schemaRegUrl  = "localhost:8081"
+	topic         = "test-topic"
+	saslMechanism = ""
+	saslUsername  = ""
+	saslSecret    = ""
 )
 
 func NewConfig() *Config {
@@ -27,7 +28,9 @@ func NewConfig() *Config {
 		BrokerHost:    kafkaHost,
 		SchemaRegUrl:  schemaRegUrl,
 		Topic:         topic,
-		SaslMechanism: nil,
+		SaslMechanism: saslMechanism,
+		SaslUsername:  saslUsername,
+		SaslSecret:    saslSecret,
 	}
 
 	if kh, exists := os.LookupEnv("KAFKA_BROKER_HOST"); exists {
@@ -40,24 +43,16 @@ func NewConfig() *Config {
 		cfg.Topic = t
 	}
 
-	if auth, exists := os.LookupEnv("KAFKA_SASL_MECHANISM"); exists {
-		var authMechanism scram.Algorithm = nil
-		if auth == scram.SHA512.Name() {
-			authMechanism = scram.SHA512
-		} else if auth == scram.SHA256.Name() {
-			authMechanism = scram.SHA256
-		}
-		kafkaClientUser, _ := os.LookupEnv("KAFKA_CLIENT_USERNAME")
-		kafkaClientSecret, _ := os.LookupEnv("KAFKA_CLIENT_SECRET")
+	if authMechanism, exists := os.LookupEnv("KAFKA_SASL_MECHANISM"); exists {
+		cfg.SaslMechanism = authMechanism
+	}
 
-		if authMechanism != nil {
-			cfg.SaslMechanism, _ = scram.Mechanism(authMechanism, kafkaClientUser, kafkaClientSecret)
-		} else {
-			cfg.SaslMechanism = plain.Mechanism{
-				Username: kafkaClientUser,
-				Password: kafkaClientSecret,
-			}
-		}
+	if username, exists := os.LookupEnv("KAFKA_CLIENT_USERNAME"); exists {
+		cfg.SaslUsername = username
+	}
+
+	if secret, exists := os.LookupEnv("KAFKA_CLIENT_SECRET"); exists {
+		cfg.SaslSecret = secret
 	}
 
 	return cfg

@@ -13,6 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/sasl"
+	"github.com/segmentio/kafka-go/sasl/scram"
 
 	"meilisearch-loader/internal/model"
 	"meilisearch-loader/internal/unmarshall"
@@ -59,7 +60,9 @@ func NewNoAuth(kafkaHost, schemaRegHost, topic string) DeserializingAvroConsumer
 	}
 }
 
-func NewSaslAuth(kafkaHost, schemaRegHost, topic string, authMechanism sasl.Mechanism) DeserializingAvroConsumer {
+func NewSaslAuth(kafkaHost, schemaRegHost, topic string, saslMechanism string, saslUsername string, saslSecret string) DeserializingAvroConsumer {
+	authMechanism := authMechanism(saslMechanism, saslUsername, saslSecret)
+
 	return DeserializingAvroConsumer{
 		BrokerHost:         kafkaHost,
 		SchemaRegistryHost: schemaRegHost,
@@ -72,6 +75,21 @@ func NewSaslAuth(kafkaHost, schemaRegHost, topic string, authMechanism sasl.Mech
 		KeySchema:   nil,
 		ValueSchema: nil,
 	}
+}
+
+func authMechanism(saslMechanism string, saslUsername string, saslSecret string) sasl.Mechanism {
+	var authMechanism scram.Algorithm = nil
+	if saslMechanism == scram.SHA512.Name() {
+		authMechanism = scram.SHA512
+	} else if saslMechanism == scram.SHA256.Name() {
+		authMechanism = scram.SHA256
+	}
+
+	var mechanism sasl.Mechanism
+	if authMechanism != nil {
+		mechanism, _ = scram.Mechanism(authMechanism, saslUsername, saslSecret)
+	}
+	return mechanism
 }
 
 // DeserializeMessage deserializes the key and value from a message and adds the deserialized message to msgChan

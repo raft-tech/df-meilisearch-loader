@@ -29,10 +29,10 @@ func main() {
 	kafkaCfg := kafkaConfig.NewConfig()
 
 	var kafkaConsumer consumer.DeserializingAvroConsumer
-	if kafkaCfg.SaslMechanism == nil {
+	if kafkaCfg.SaslMechanism == "" {
 		kafkaConsumer = consumer.NewNoAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic)
 	} else {
-		kafkaConsumer = consumer.NewSaslAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic, kafkaCfg.SaslMechanism)
+		kafkaConsumer = consumer.NewSaslAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic, kafkaCfg.SaslMechanism, kafkaCfg.SaslUsername, kafkaCfg.SaslSecret)
 	}
 	defer kafkaConsumer.KafkaClient.Close()
 

@@ -13,7 +13,7 @@ func TestConfig_Defaults(t *testing.T) {
 		{"BrokerHost", "localhost:9092"},
 		{"SchemaRegUrl", "localhost:8081"},
 		{"Topic", "test-topic"},
-		{"SaslMechanism", "nil"},
+		{"SaslMechanism", ""},
 	}
 	for _, d := range data {
 		t.Run(d.name, func(t *testing.T) {
@@ -34,6 +34,7 @@ func TestConfig_Envs(t *testing.T) {
 		{"BrokerHost", "KAFKA_BROKER_HOST", "customhost:9092"},
 		{"SchemaRegUrl", "SCHEMA_REGISTRY_URL", "customhost:8081"},
 		{"Topic", "KAFKA_TOPIC", "custom-topic"},
+		{"SaslMechanism", "KAFKA_SASL_MECHANISM", "SCRAM-SHA-512"},
 	}
 	for _, d := range data {
 		t.Run(d.name, func(t *testing.T) {
@@ -49,8 +50,5 @@ func TestConfig_Envs(t *testing.T) {
 func getField(c *Config, field string) string {
 	r := reflect.ValueOf(c)
 	f := reflect.Indirect(r).FieldByName(field)
-	if f.Type().String() == "sasl.Mechanism" {
-		return "nil"
-	}
 	return f.String()
 }

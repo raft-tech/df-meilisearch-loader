@@ -85,7 +85,7 @@ func authMechanism(saslMechanism string, saslUsername string, saslSecret string)
 		authMechanism = scram.SHA256
 	}
 
-	var mechanism sasl.Mechanism
+	var mechanism sasl.Mechanism = nil
 	if authMechanism != nil {
 		mechanism, _ = scram.Mechanism(authMechanism, saslUsername, saslSecret)
 	}

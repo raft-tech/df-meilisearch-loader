@@ -11,6 +11,9 @@ The following table lists the environment variables that can be set, along with 
 | KAFKA_BROKER_HOST                                                                                                  | The broker address used to connect to the kafka cluster     | localhost:9092   |
 | KAFKA_TOPIC                                                                                                        | The topic to consume the data from                          | test-topic       |
 | [SCHEMA_REGISTRY_URL](https://docs.confluent.io/platform/current/schema-registry/index.html)                       | The URL of the schema registry                              | localhost:8081   |
+| KAFKA_SASL_MECHANISM | SASL mechanisms. Valid options are `SCRAM-SHA-256`, `SCRAM-SHA-512`. | Blank |
+| KAFKA_CLIENT_USERNAME | Username used for auth | Blank |
+| KAFKA_CLIENT_SECRET | Secret used for auth | Blank |
 | MEILISEARCH_URL                                                                                                    | The address of the server Meilisearch is listening on       | localhost:7700   |
 | [MEILISEARCH_INDEX](https://www.meilisearch.com/docs/learn/core_concepts/indexes)                                  | The uid where documents will be grouped                     | test-index       |
 | [MEILISEARCH_INSERT_BATCH_SIZE](https://www.meilisearch.com/docs/reference/api/documents#add-or-replace-documents) | The number of documents to batch before adding to the index | 50               |

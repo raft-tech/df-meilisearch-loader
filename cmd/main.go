@@ -1,14 +1,16 @@
 package main
 
 import (
+	"os"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+
 	kafkaConfig "meilisearch-loader/internal/kafka/configs"
 	"meilisearch-loader/internal/kafka/consumer"
 	meiliConfig "meilisearch-loader/internal/meilisearch/configs"
 	"meilisearch-loader/internal/meilisearch/producer"
 	"meilisearch-loader/internal/model"
-	"os"
 )
 
 func main() {
@@ -26,7 +28,12 @@ func main() {
 
 	kafkaCfg := kafkaConfig.NewConfig()
 
-	kafkaConsumer := consumer.NewNoAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic)
+	var kafkaConsumer consumer.DeserializingAvroConsumer
+	if kafkaCfg.SaslMechanism == nil {
+		kafkaConsumer = consumer.NewNoAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic)
+	} else {
+		kafkaConsumer = consumer.NewSaslAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic, kafkaCfg.SaslMechanism)
+	}
 	defer kafkaConsumer.KafkaClient.Close()
 
 	msgChan := make(chan model.Message)

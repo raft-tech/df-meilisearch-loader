@@ -4,16 +4,18 @@ import (
 	"context"
 	"encoding/binary"
 	"fmt"
-	"github.com/rs/zerolog/log"
-	"meilisearch-loader/internal/model"
-	"meilisearch-loader/internal/unmarshall"
 	"net/http"
 	"net/url"
 	"path"
 	"time"
 
 	"github.com/linkedin/goavro/v2"
+	"github.com/rs/zerolog/log"
 	"github.com/segmentio/kafka-go"
+	"github.com/segmentio/kafka-go/sasl"
+
+	"meilisearch-loader/internal/model"
+	"meilisearch-loader/internal/unmarshall"
 )
 
 const AvroMessageMagicByte = 0x0
@@ -50,6 +52,21 @@ func NewNoAuth(kafkaHost, schemaRegHost, topic string) DeserializingAvroConsumer
 			Brokers: []string{kafkaHost},
 			Topic:   topic,
 			Dialer:  &kafka.Dialer{Timeout: 10 * time.Second, DualStack: true, SASLMechanism: nil},
+		}),
+		Topic:       topic,
+		KeySchema:   nil,
+		ValueSchema: nil,
+	}
+}
+
+func NewSaslAuth(kafkaHost, schemaRegHost, topic string, authMechanism sasl.Mechanism) DeserializingAvroConsumer {
+	return DeserializingAvroConsumer{
+		BrokerHost:         kafkaHost,
+		SchemaRegistryHost: schemaRegHost,
+		KafkaClient: kafka.NewReader(kafka.ReaderConfig{
+			Brokers: []string{kafkaHost},
+			Topic:   topic,
+			Dialer:  &kafka.Dialer{Timeout: 10 * time.Second, DualStack: true, SASLMechanism: authMechanism},
 		}),
 		Topic:       topic,
 		KeySchema:   nil,

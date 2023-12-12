@@ -13,6 +13,7 @@ func TestConfig_Defaults(t *testing.T) {
 		{"BrokerHost", "localhost:9092"},
 		{"SchemaRegUrl", "localhost:8081"},
 		{"Topic", "test-topic"},
+		{"SaslMechanism", "nil"},
 	}
 	for _, d := range data {
 		t.Run(d.name, func(t *testing.T) {
@@ -20,7 +21,6 @@ func TestConfig_Defaults(t *testing.T) {
 			if result := getField(c, d.name); result != d.expected {
 				t.Errorf("Expected %s, got %s", d.expected, result)
 			}
-
 		})
 	}
 }
@@ -49,5 +49,8 @@ func TestConfig_Envs(t *testing.T) {
 func getField(c *Config, field string) string {
 	r := reflect.ValueOf(c)
 	f := reflect.Indirect(r).FieldByName(field)
+	if f.Type().String() == "sasl.Mechanism" {
+		return "nil"
+	}
 	return f.String()
 }

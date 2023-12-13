@@ -85,11 +85,15 @@ func authMechanism(saslMechanism string, saslUsername string, saslSecret string)
 		authMechanism = scram.SHA256
 	}
 
-	var mechanism sasl.Mechanism = nil
 	if authMechanism != nil {
-		mechanism, _ = scram.Mechanism(authMechanism, saslUsername, saslSecret)
+		mechanism, err := scram.Mechanism(authMechanism, saslUsername, saslSecret)
+		if err != nil {
+			log.Fatal().Err(err).Msgf("Failed to construct auth mechanism.")
+		}
+		return mechanism
+	} else {
+		return nil
 	}
-	return mechanism
 }
 
 // DeserializeMessage deserializes the key and value from a message and adds the deserialized message to msgChan

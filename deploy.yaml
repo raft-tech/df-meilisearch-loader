@@ -14,7 +14,7 @@ spec:
   template:
     metadata:
       name: kafka-meilisearch-loader
-      namespace: default
+      namespace: data-fabric
       labels:
         k8s-app: kafka-meilisearch-loader
     spec:
@@ -29,7 +29,7 @@ spec:
             limits:
               cpu: 1000m
               memory: 4000Mi
-          image: df-meili:dev
+          image: ghcr.io/raft-tech/df-meili:dev
           imagePullPolicy: IfNotPresent
           env:
             - name: KAFKA_BROKER_HOST
@@ -37,7 +37,7 @@ spec:
             - name: KAFKA_SASL_MECHANISM
               value: SCRAM-SHA-512
             - name: KAFKA_TOPIC
-              value: udl--test--track
+              value: ais--admin--ais
             - name: KAFKA_CLIENT_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -51,7 +51,7 @@ spec:
             - name: SCHEMA_REGISTRY_URL
               value: http://df-schema-registry.data-fabric:8081
             - name: MEILISEARCH_URL
-              value: "http://df-meilisearch.default.svc.cluster.local:7700"
+              value: "http://df-meilisearch.data-fabric.svc.cluster.local:7700"
             - name: MEILISEARCH_INDEX
               value: "udl-track"
             - name: MEILISEARCH_INSERT_BATCH_SIZE

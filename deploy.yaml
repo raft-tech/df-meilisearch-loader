@@ -33,7 +33,7 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: KAFKA_BROKER_HOST
-              value: df-kafka-brokers.data-fabric:9092
+              value: df-kafka-brokers:9092
             - name: KAFKA_SASL_MECHANISM
               value: SCRAM-SHA-512
             - name: KAFKA_TOPIC

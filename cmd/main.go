@@ -1,16 +1,17 @@
 package main
 
 import (
+	"meilisearch-loader/internal/kafka/consumer"
+	"meilisearch-loader/internal/meilisearch/producer"
+	"meilisearch-loader/internal/model"
 	"os"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
 	kafkaConfig "meilisearch-loader/internal/kafka/configs"
-	"meilisearch-loader/internal/kafka/consumer"
+
 	meiliConfig "meilisearch-loader/internal/meilisearch/configs"
-	"meilisearch-loader/internal/meilisearch/producer"
-	"meilisearch-loader/internal/model"
 )
 
 func main() {
@@ -26,13 +27,13 @@ func main() {
 		log.Fatal().Msgf(err.Error())
 	}
 
-	kafkaCfg := kafkaConfig.NewConfig()
+	kafkaCfg := kafkaConfig.NewConfig(meiliCfg.Index)
 
 	var kafkaConsumer consumer.DeserializingAvroConsumer
 	if kafkaCfg.SaslMechanism == "" {
-		kafkaConsumer = consumer.NewNoAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic)
+		kafkaConsumer = consumer.NewNoAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic, kafkaCfg.GroupId)
 	} else {
-		kafkaConsumer = consumer.NewSaslAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic, kafkaCfg.SaslMechanism, kafkaCfg.SaslUsername, kafkaCfg.SaslSecret)
+		kafkaConsumer = consumer.NewSaslAuth(kafkaCfg.BrokerHost, kafkaCfg.SchemaRegUrl, kafkaCfg.Topic, kafkaCfg.GroupId, kafkaCfg.SaslMechanism, kafkaCfg.SaslUsername, kafkaCfg.SaslSecret)
 	}
 	defer kafkaConsumer.KafkaClient.Close()
 

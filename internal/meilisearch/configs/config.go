@@ -11,6 +11,7 @@ type Config struct {
 	Index           string
 	IndexPrimaryKey string
 	Url             string
+	GroupID         string
 }
 
 const (

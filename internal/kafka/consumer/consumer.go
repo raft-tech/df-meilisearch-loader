@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/binary"
 	"fmt"
+	"meilisearch-loader/internal/model"
+	"meilisearch-loader/internal/unmarshall"
 	"net/http"
 	"net/url"
 	"path"
@@ -14,9 +16,6 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/sasl"
 	"github.com/segmentio/kafka-go/sasl/scram"
-
-	"meilisearch-loader/internal/model"
-	"meilisearch-loader/internal/unmarshall"
 )
 
 const AvroMessageMagicByte = 0x0
@@ -44,7 +43,7 @@ type Schema struct {
 	Codec *goavro.Codec
 }
 
-func NewNoAuth(kafkaHost, schemaRegHost, topic string) DeserializingAvroConsumer {
+func NewNoAuth(kafkaHost, schemaRegHost, topic string, groupId string) DeserializingAvroConsumer {
 	// mechanism := plain.Mechanism{Username: saslUser, Password: saslPass}
 	return DeserializingAvroConsumer{
 		BrokerHost:         kafkaHost,
@@ -53,6 +52,7 @@ func NewNoAuth(kafkaHost, schemaRegHost, topic string) DeserializingAvroConsumer
 			Brokers: []string{kafkaHost},
 			Topic:   topic,
 			Dialer:  &kafka.Dialer{Timeout: 10 * time.Second, DualStack: true, SASLMechanism: nil},
+			GroupID: groupId,
 		}),
 		Topic:       topic,
 		KeySchema:   nil,
@@ -60,7 +60,7 @@ func NewNoAuth(kafkaHost, schemaRegHost, topic string) DeserializingAvroConsumer
 	}
 }
 
-func NewSaslAuth(kafkaHost, schemaRegHost, topic string, saslMechanism string, saslUsername string, saslSecret string) DeserializingAvroConsumer {
+func NewSaslAuth(kafkaHost, schemaRegHost, topic string, groupId string, saslMechanism string, saslUsername string, saslSecret string) DeserializingAvroConsumer {
 	authMechanism := authMechanism(saslMechanism, saslUsername, saslSecret)
 
 	return DeserializingAvroConsumer{
@@ -70,6 +70,7 @@ func NewSaslAuth(kafkaHost, schemaRegHost, topic string, saslMechanism string, s
 			Brokers: []string{kafkaHost},
 			Topic:   topic,
 			Dialer:  &kafka.Dialer{Timeout: 10 * time.Second, DualStack: true, SASLMechanism: authMechanism},
+			GroupID: groupId,
 		}),
 		Topic:       topic,
 		KeySchema:   nil,

@@ -1,7 +1,9 @@
 package configs
 
 import (
+	"fmt"
 	"os"
+	"strings"
 )
 
 type Config struct {
@@ -12,6 +14,7 @@ type Config struct {
 	SaslMechanism string
 	SaslUsername  string
 	SaslSecret    string
+	GroupId       string
 }
 
 const (
@@ -21,9 +24,19 @@ const (
 	saslMechanism = ""
 	saslUsername  = ""
 	saslSecret    = ""
+	indeName      = ""
 )
 
-func NewConfig() *Config {
+// The consumer groupId needs to precise enought so we can add new instances of consumers
+// to be able to scale up and not to general to consider issues with multiple ingesiton
+// piplines feeding data into different indexes. Also the groupId should not change on restarts
+// or re-deployments since the app should pick where it left of.
+
+func groupId(indexName string) string {
+	return strings.TrimSuffix(fmt.Sprintf("%s-%s", "df-meilisearch", indexName), "-")
+}
+
+func NewConfig(indexName string) *Config {
 	cfg := &Config{
 		BrokerHost:    kafkaHost,
 		SchemaRegUrl:  schemaRegUrl,
@@ -31,6 +44,7 @@ func NewConfig() *Config {
 		SaslMechanism: saslMechanism,
 		SaslUsername:  saslUsername,
 		SaslSecret:    saslSecret,
+		GroupId:       groupId(indexName),
 	}
 
 	if kh, exists := os.LookupEnv("KAFKA_BROKER_HOST"); exists {
@@ -53,6 +67,10 @@ func NewConfig() *Config {
 
 	if secret, exists := os.LookupEnv("KAFKA_CLIENT_SECRET"); exists {
 		cfg.SaslSecret = secret
+	}
+
+	if consumerGroupId, exists := os.LookupEnv("KAFKA_CLIENT_CONSUMER_GROUPID"); exists {
+		cfg.GroupId = consumerGroupId
 	}
 
 	return cfg

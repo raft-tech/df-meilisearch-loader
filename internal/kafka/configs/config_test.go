@@ -6,6 +6,7 @@ import (
 )
 
 func TestConfig_Defaults(t *testing.T) {
+	indexName := ""
 	data := []struct {
 		name     string
 		expected string
@@ -14,10 +15,11 @@ func TestConfig_Defaults(t *testing.T) {
 		{"SchemaRegUrl", "localhost:8081"},
 		{"Topic", "test-topic"},
 		{"SaslMechanism", ""},
+		{"GroupId", "df-meilisearch"},
 	}
 	for _, d := range data {
 		t.Run(d.name, func(t *testing.T) {
-			c := NewConfig()
+			c := NewConfig(indexName)
 			if result := getField(c, d.name); result != d.expected {
 				t.Errorf("Expected %s, got %s", d.expected, result)
 			}
@@ -26,6 +28,7 @@ func TestConfig_Defaults(t *testing.T) {
 }
 
 func TestConfig_Envs(t *testing.T) {
+	indexName := "testIndex"
 	data := []struct {
 		name     string
 		env      string
@@ -35,11 +38,12 @@ func TestConfig_Envs(t *testing.T) {
 		{"SchemaRegUrl", "SCHEMA_REGISTRY_URL", "customhost:8081"},
 		{"Topic", "KAFKA_TOPIC", "custom-topic"},
 		{"SaslMechanism", "KAFKA_SASL_MECHANISM", "SCRAM-SHA-512"},
+		{"GroupId", "KAFKA_CLIENT_CONSUMER_GROUPID", "test-consumer-group"},
 	}
 	for _, d := range data {
 		t.Run(d.name, func(t *testing.T) {
 			t.Setenv(d.env, d.envValue)
-			c := NewConfig()
+			c := NewConfig(indexName)
 			if result := getField(c, d.name); result != d.envValue {
 				t.Errorf("Expected %s, got %s", d.envValue, result)
 			}

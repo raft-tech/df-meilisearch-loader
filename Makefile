@@ -3,8 +3,8 @@ n.PHONY: build, delete, deploy, docker, install, kind, fmt, vet, test
 # Remember to do "export DF_HOME=/path/to/data-fabric/" before running make build
 PROJECT_HOME=${PWD}
 REGISTRY=ghcr.io/raft-tech
-IMAGE=meilisearch-loader
-VERSION=latest
+IMAGE=df-meilisearch-loader
+VERSION=dev
 FULL_IMAGE=${REGISTRY}/${IMAGE}:${VERSION}
 KIND_CLUSTER=data-fabric
 
